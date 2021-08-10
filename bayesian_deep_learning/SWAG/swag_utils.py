@@ -12,7 +12,7 @@ def sample(scale: float = 1.0, block: bool = False, swag_weights: List[GAUSSIAN]
            var_top_clamp: float = 1e4) -> List[tf.Tensor]:
     """Sample from the swa weights
     :param scale: the shift in the gaussian
-    :param block: calculate full bloc wise gaussian or not
+    :param block: calculate_weights with full bloc wise gaussian or not
     :param swag_weights: the current SWAG weights
     :param var_clamp: min value for the gaussian variance
     :param var_top_clamp: max value for the gaussian variance
@@ -67,7 +67,8 @@ def sample_full_rank(scale: float, swag_weights: List[GAUSSIAN], var_clamp: floa
     for w in swag_weights:
         mean = w.mean
         sq = w.var
-        current_sample = calc_full_rank(mean.reshape(-1), sq.reshape(-1), scale_sqrt, var_clamp, var_top_clamp)
+        current_sample = calc_full_rank(tf.cast(tf.reshape(mean, -1), tf.float32),
+                                        tf.cast(tf.reshape(sq, -1), tf.float32), scale_sqrt, var_clamp, var_top_clamp)
         samples.append(tf.reshape(current_sample, mean.shape))
     return samples
 
@@ -102,7 +103,7 @@ def initial_swag_weights(model_weights: np.array) -> List[GAUSSIAN]:
     :rtype: list[Gaussian]
     """
     swa_weights = []
-    for w in model_weights:
-        current_swa = GAUSSIAN(mean=w, var=0)
+    for _ in model_weights:
+        current_swa = GAUSSIAN(mean=0., var=0.)
         swa_weights.append(current_swa)
     return swa_weights

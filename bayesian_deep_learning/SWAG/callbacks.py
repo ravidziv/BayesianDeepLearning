@@ -144,7 +144,7 @@ class SWAGRScheduler(Callback):
         """learning rate scheduler for SWAGCallback
         :param lr_schedule: which scheduler to choose
         :param swag_lr2: max learning rate for SWAG
-        :param swag_lr: lower bound learning right for SWAG
+        :param swag_lr:  learning rate for SWAG
         :param start_epoch: which epoch start SWAG
         :param swag_freq: the interval to update the parameters
         """
@@ -169,7 +169,7 @@ class SWAGRScheduler(Callback):
             # automatic swag_lr
         if self.swa_lr == "auto":
             self.swa_lr = 0.1 * self.init_lr
-        tf.debugging.assert_greater(self.init_lr, self.swa_lr, message='"swag_lr" must be lower than rate set.')
+        #tf.debugging.assert_greater(self.init_lr, self.swa_lr, message='"swag_lr" must be lower than rate set.')
         if self.lr_schedule == "cyclic" and self.swa_lr2 == "auto":
             self.swa_lr2 = self.swa_lr + (self.init_lr - self.swa_lr) * 0.25
 
@@ -226,7 +226,7 @@ def update_lr(epoch: int, start_epoch: int, swa_lr: float, steps: int, swa_freq:
 
 def _constant_schedule(epoch: int, start_epoch: int, swa_lr: float, init_lr: float) -> float:
     """
-    Calculate the updated learning rarte which change by constant factor each step.
+    Calculate the updated learning rate which change by constant factor each step.
     :return: updated learning rate
     :rtype: float
     :param epoch: current epoch
